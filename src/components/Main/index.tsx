@@ -12,11 +12,15 @@ import './Main.css'
 
 export const Main = ({ user }: any) => {
   const [totalUsers, setTotalUsers] = useState<number>(0)
-  const [userAvatar, setUserAvatar] = useState<string>()
-  const [svgIcon, setSvgIcon] = useState<any>(faUser)
+  const [totalActiveUsers, setTotalActiveUsers] = useState<number>(0)
+  const [totalInactiveUsers, setTotalInactiveUsers] = useState<number>(0)
+  const [totalNotes, setTotalNotes] = useState<number>(0)
+  const [totalCompletedNotes, setTotalCompletedNotes] = useState<number>(0)
+  const [totalPendingNotes, setTotalPendingNotes] = useState<number>(0)
+  const [totalOverdueNotes, setTotalOverdueNotes] = useState<number>(0)
+  const [totalUndatedNotes, setTotalUndatedNotes] = useState<number>(0)
 
   let userName = ''
-  const avatar = ''
 
   if (user) {
     if (typeof user !== 'undefined') {
@@ -27,18 +31,69 @@ export const Main = ({ user }: any) => {
   } else {
     userName = 'Visitante'
   }
-
   useEffect(() => {
-    api
-      .get('/users', {
-        headers: {
-          Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
-        }
-      })
-      .then((response) => {
-        setTotalUsers(response.data.totalDocuments)
-      })
-  }, [user])
+    const endpoints = [
+      '/users',
+      '/users/active',
+      '/users/inactive',
+      '/notes',
+      '/notes/completed',
+      '/notes/pending',
+      '/notes/overdue',
+      '/notes/undated'
+    ]
+
+    for (const element of endpoints) {
+      api
+        .get(element, {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
+          }
+        })
+        .then(({ data }) => {
+          switch (element) {
+            case '/users':
+              setTotalUsers(data.data.length > 0 ? data.totalDocuments : 0)
+              break
+            case '/users/active':
+              setTotalActiveUsers(
+                data.result.data.length > 0 ? data.result.totalDocuments : 0
+              )
+              break
+            case '/users/inactive':
+              setTotalInactiveUsers(
+                data.users.length > 0 ? data.totalDocuments : 0
+              )
+              break
+            case '/notes':
+              setTotalNotes(data.data.length > 0 ? data.totalDocuments : 0)
+              break
+            case '/notes/completed':
+              setTotalCompletedNotes(
+                data.notes.length > 0 ? data.notes.length : 0
+              )
+              break
+            case '/notes/pending':
+              setTotalPendingNotes(
+                data.notes.length > 0 ? data.notes.length : 0
+              )
+              break
+            case '/notes/overdue':
+              setTotalOverdueNotes(
+                data.notes.length > 0 ? data.notes.length : 0
+              )
+              break
+            case '/notes/undated':
+              setTotalUndatedNotes(
+                data.notes.length > 0 ? data.notes.length : 0
+              )
+              break
+            default:
+              break
+          }
+        })
+    }
+  }, [])
 
   return (
     <main className="main__container">
@@ -63,7 +118,7 @@ export const Main = ({ user }: any) => {
           <FontAwesomeIcon icon={faUsers} className="text-lightblue" />
           <div className="card_inner">
             <p className="text-primary-p">Usuários Ativos</p>
-            <span className="text-title font-bold">{totalUsers}</span>
+            <span className="text-title font-bold">{totalActiveUsers}</span>
           </div>
         </div>
 
@@ -71,7 +126,7 @@ export const Main = ({ user }: any) => {
           <FontAwesomeIcon icon={faUser} className="text-red" />
           <div className="card_inner">
             <p className="text-primary-p">Usuários Inativos</p>
-            <span className="text-title font-bold">{totalUsers}</span>
+            <span className="text-title font-bold">{totalInactiveUsers}</span>
           </div>
         </div>
 
@@ -79,7 +134,7 @@ export const Main = ({ user }: any) => {
           <FontAwesomeIcon icon={faNoteSticky} className="text-yellow" />
           <div className="card_inner">
             <p className="text-primary-p">Anotações Criadas</p>
-            <span className="text-title font-bold">{totalUsers}</span>
+            <span className="text-title font-bold">{totalNotes}</span>
           </div>
         </div>
 
@@ -87,7 +142,7 @@ export const Main = ({ user }: any) => {
           <FontAwesomeIcon icon={faNoteSticky} className="text-green" />
           <div className="card_inner">
             <p className="text-primary-p">Anotações (S/ Data)</p>
-            <span className="text-title font-bold">{totalUsers}</span>
+            <span className="text-title font-bold">{totalUndatedNotes}</span>
           </div>
         </div>
 
@@ -95,7 +150,7 @@ export const Main = ({ user }: any) => {
           <FontAwesomeIcon icon={faNoteSticky} className="text-purple" />
           <div className="card_inner">
             <p className="text-primary-p">Anotações (Pendentes)</p>
-            <span className="text-title font-bold">{totalUsers}</span>
+            <span className="text-title font-bold">{totalPendingNotes}</span>
           </div>
         </div>
 
@@ -103,7 +158,7 @@ export const Main = ({ user }: any) => {
           <FontAwesomeIcon icon={faNoteSticky} className="text-cyan" />
           <div className="card_inner">
             <p className="text-primary-p">Anotações (Concluídas)</p>
-            <span className="text-title font-bold">{totalUsers}</span>
+            <span className="text-title font-bold">{totalCompletedNotes}</span>
           </div>
         </div>
 
@@ -111,7 +166,7 @@ export const Main = ({ user }: any) => {
           <FontAwesomeIcon icon={faNoteSticky} className="text-scarlet" />
           <div className="card_inner">
             <p className="text-primary-p">Anotações (Atrasadas)</p>
-            <span className="text-title font-bold">{totalUsers}</span>
+            <span className="text-title font-bold">{totalOverdueNotes}</span>
           </div>
         </div>
       </div>
@@ -126,7 +181,16 @@ export const Main = ({ user }: any) => {
             <FontAwesomeIcon icon={faNoteSticky} />
           </div>
           <div id="apex1"></div>
-          <Charts />
+          <Charts
+            totalUsers={totalUsers}
+            totalActiveUsers={totalActiveUsers}
+            totalInactiveUsers={totalInactiveUsers}
+            totalNotes={totalNotes}
+            totalUndatedNotes={totalUndatedNotes}
+            totalPendingNotes={totalPendingNotes}
+            totalCompletedNotes={totalCompletedNotes}
+            totalOverdueNotes={totalOverdueNotes}
+          />
         </div>
 
         <div className="charts__right">
@@ -142,42 +206,42 @@ export const Main = ({ user }: any) => {
           <div className="charts__right__cards">
             <div className="card0">
               <h1>Usuários Cadastrados</h1>
-              <p>285</p>
+              <p>{totalUsers}</p>
             </div>
 
             <div className="card1">
               <h1>Usuários Ativos</h1>
-              <p>285</p>
+              <p>{totalActiveUsers}</p>
             </div>
 
             <div className="card2">
               <h1>Usuários Inativos</h1>
-              <p>400</p>
+              <p>{totalInactiveUsers}</p>
             </div>
 
             <div className="card3">
               <h1>Anotações Criadas</h1>
-              <p>3900</p>
+              <p>{totalNotes}</p>
             </div>
 
             <div className="card4">
               <h1>Anotações (S/ Data)</h1>
-              <p>1881</p>
+              <p>{totalUndatedNotes}</p>
             </div>
 
             <div className="card5">
               <h1>Anotações (Pendentes)</h1>
-              <p>1203</p>
+              <p>{totalPendingNotes}</p>
             </div>
 
             <div className="card6">
               <h1>Anotações (Concluídas)</h1>
-              <p>1099</p>
+              <p>{totalCompletedNotes}</p>
             </div>
 
             <div className="card7">
               <h1>Anotações (Atrasadas)</h1>
-              <p>1099</p>
+              <p>{totalOverdueNotes}</p>
             </div>
           </div>
         </div>

@@ -1,0 +1,28 @@
+main {
+  grid-area: main;
+  background-color: #f3f4f6;
+  overflow-y: auto;
+}
+
+.main__container {
+  padding: 1.25rem 2.1875rem;
+}
+
+.main__title {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.main__title > img {
+  max-height: 6.25rem;
+  object-fit: contain;
+  margin-right: 1.25rem;
+}
+
+.main__greetings > h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2e4a66;
+  margin-bottom: 0.3125rem;
+}

@@ -1,9 +1,10 @@
 import { Main } from 'components/Main'
 import { useContext, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Navbar } from '../../components/Navbar'
 import { SideBar } from '../../components/SideBar'
 import { AuthContext } from '../../context/auth'
+import { ViewUsers } from '../../pages/Admin/Users/ViewUsers'
 import api from '../../utils/api'
 
 export const Dashboard = () => {
@@ -12,6 +13,7 @@ export const Dashboard = () => {
   const navigate = useNavigate()
   const [access_token] = useState(sessionStorage.getItem('access_token') || '')
   const [sidebarOpen, setSidebarOpen] = useState(true)
+  const location = useLocation()
 
   const handleSidebarOpen = () => {
     setSidebarOpen(!sidebarOpen)
@@ -45,7 +47,9 @@ export const Dashboard = () => {
           handleSidebarOpen={handleSidebarOpen}
         />
 
-        <Main user={user} />
+        {location.pathname === '/dashboard' && <Main user={user} />}
+
+        {location.pathname === '/dashboard/users' && <ViewUsers user={user} />}
 
         <Navbar
           handleSidebarOpen={handleSidebarOpen}

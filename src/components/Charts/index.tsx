@@ -8,47 +8,44 @@ import {
 } from 'react-vis'
 import '../../../node_modules/react-vis/dist/style.css'
 
-export const Charts = () => {
+export const Charts = ({
+  totalUsers,
+  totalActiveUsers,
+  totalInactiveUsers,
+  totalNotes,
+  totalCompletedNotes,
+  totalPendingNotes,
+  totalOverdueNotes,
+  totalUndatedNotes
+}: any) => {
   const data = [
     {
-      x: 1,
-      y: 10
+      x: totalActiveUsers,
+      y: totalNotes
     },
     {
-      x: 2,
-      y: 5
+      x: totalInactiveUsers,
+      y: totalNotes
     },
     {
-      x: 3,
-      y: 15
+      x: totalUsers,
+      y: totalNotes
     },
     {
-      x: 4,
-      y: 10
+      x: totalUsers,
+      y: totalCompletedNotes
     },
     {
-      x: 5,
-      y: 20
+      x: totalUsers,
+      y: totalPendingNotes
     },
     {
-      x: 6,
-      y: 15
+      x: totalUsers,
+      y: totalOverdueNotes
     },
     {
-      x: 7,
-      y: 25
-    },
-    {
-      x: 8,
-      y: 20
-    },
-    {
-      x: 9,
-      y: 30
-    },
-    {
-      x: 10,
-      y: 25
+      x: totalUsers,
+      y: totalUndatedNotes
     }
   ]
 

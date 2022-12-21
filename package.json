@@ -21,15 +21,24 @@
     "typecheck": "tsc --project tsconfig.json --noEmit"
   },
   "dependencies": {
+    "@emotion/styled": "^11.10.5",
     "@fortawesome/fontawesome-svg-core": "^6.2.1",
     "@fortawesome/free-regular-svg-icons": "^6.2.1",
     "@fortawesome/free-solid-svg-icons": "^6.2.1",
     "@fortawesome/react-fontawesome": "^0.2.0",
+    "@material-ui/core": "^4.12.4",
+    "@material-ui/data-grid": "^4.0.0-alpha.37",
+    "@material-ui/icons": "^4.11.3",
+    "@material-ui/lab": "^4.0.0-alpha.61",
+    "@mui/material": "^5.11.1",
+    "@mui/styled-engine": "^5.11.0",
+    "@mui/x-data-grid": "^5.17.16",
     "axios": "^1.2.1",
     "events": "^3.3.0",
+    "imgbb-uploader": "^1.5.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.4.5",
+    "react-router-dom": "^6.5.0",
     "react-vis": "^1.11.7"
   },
   "devDependencies": {

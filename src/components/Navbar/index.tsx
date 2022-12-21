@@ -1,6 +1,6 @@
 import { faBars, faClock } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import './Navbar.css'
 
 type Props = {
@@ -8,16 +8,18 @@ type Props = {
   sidebarOpen: boolean
 }
 
-export const Navbar = ({ handleSidebarOpen, sidebarOpen }: Props) => {
-  const [selectedTab, setSelectedTab] = useState('Admin')
+export const Navbar = ({ handleSidebarOpen }: Props) => {
+  // const [selectedTab, setSelectedTab] = useState('/dashboard')
+  const location = useLocation()
+
   const tabs = [
     {
       tabTitle: 'Usuários',
-      link: '#'
+      link: '/dashboard/users'
     },
     {
       tabTitle: 'Anotações',
-      link: '/management/notes'
+      link: '/dashboard/notes'
     },
     {
       tabTitle: 'Admin',
@@ -25,9 +27,9 @@ export const Navbar = ({ handleSidebarOpen, sidebarOpen }: Props) => {
     }
   ]
 
-  const handleSelectedTab = (tab: string) => {
-    setSelectedTab(tab)
-  }
+  // const handleSelectedTab = (tab: string) => {
+  //   setSelectedTab(tab)
+  // }
 
   return (
     <>
@@ -41,8 +43,8 @@ export const Navbar = ({ handleSidebarOpen, sidebarOpen }: Props) => {
             <a
               href={elem.link}
               key={elem.tabTitle}
-              onClick={() => handleSelectedTab(elem.tabTitle)}
-              className={elem.tabTitle === selectedTab ? 'active_link' : ''}
+              // onClick={() => handleSelectedTab(elem.link)}
+              className={location.pathname === elem.link ? 'active_link' : ''}
             >
               {elem.tabTitle}
             </a>

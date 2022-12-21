@@ -2,6 +2,8 @@ import { useContext, useEffect, useState } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { Dashboard } from '../components/Dashboard'
 import { AuthContext } from '../context/auth'
+import { ViewUsers } from '../pages/Admin/Users/ViewUsers'
+import { ViewUser } from '../pages/Admin/Users/view-user'
 import LoginPage from '../pages/Login'
 import SignupPage from '../pages/Signup'
 import api from '../utils/api'
@@ -38,7 +40,7 @@ function AllRoutes() {
   }
   return (
     <Routes>
-      <Route index element={<LoginPage />} /> {/* default route */}
+      <Route element={<LoginPage />} /> {/* default route */}
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
       {/* <Route path="/profile" component={Profile} /> */}
@@ -50,6 +52,41 @@ function AllRoutes() {
           </Private>
         }
       />
+      <Route
+        path="/management/users"
+        element={
+          <Private>
+            <ViewUsers />
+          </Private>
+        }
+      />
+      <Route
+        path="/dashboard/*"
+        element={
+          <Private>
+            <Dashboard />
+          </Private>
+        }
+      >
+        <Route index element={<Dashboard />} />
+        <Route
+          path="users"
+          element={
+            <Private>
+              <ViewUsers />
+            </Private>
+          }
+        >
+          <Route
+            path=":id"
+            element={
+              <Private>
+                <ViewUser />
+              </Private>
+            }
+          />
+        </Route>
+      </Route>
       {/* <<Route path="/create-profile" component={CreateProfile} />
       <Route path="/edit-profile" component={EditProfile} />
       <Route path="/add-experience" component={AddExperience} />
