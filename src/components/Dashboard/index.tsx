@@ -11,9 +11,9 @@ export const Dashboard = () => {
   const { authenticated } = useContext<any>(AuthContext)
   const [user, setUser] = useState<any>({})
   const navigate = useNavigate()
-  const [access_token] = useState(sessionStorage.getItem('access_token') || '')
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const location = useLocation()
+  const [token] = useState(sessionStorage.getItem('access_token') || '')
 
   const handleSidebarOpen = () => {
     setSidebarOpen(!sidebarOpen)
@@ -26,19 +26,21 @@ export const Dashboard = () => {
       navigate('/login')
     }
 
-    if (access_token) {
-      api
-        .get('/auth/verify-user', {
-          headers: {
-            Authorization: `Bearer ${access_token}`
-          }
-        })
-        .then((response) => {
-          console.log(response.data)
-          setUser(response.data.user)
-        })
-    }
-  }, [authenticated, access_token, navigate])
+    api
+      .get('/auth/verify-user', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      .then((response) => {
+        sessionStorage.setItem(
+          'user_verified',
+          JSON.stringify(response.data.user)
+        )
+        console.log(response.data.user)
+        setUser(response.data.user)
+      })
+  }, [authenticated, navigate, token])
   return (
     <>
       <div className="container">

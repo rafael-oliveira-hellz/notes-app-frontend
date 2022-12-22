@@ -1,104 +1,35 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FilterMatchMode } from 'primereact/api'
-import { Column } from 'primereact/column'
-import { DataTable } from 'primereact/datatable'
-import { InputText } from 'primereact/inputtext'
-import React, { useEffect, useState } from 'react'
-import api from '../../../../utils/api'
-// import { Toast } from 'primereact/toast';
-// import { FileUpload } from 'primereact/fileupload';
-// import { Rating } from 'primereact/rating';
-// import { Toolbar } from 'primereact/toolbar';
-// import { InputTextarea } from 'primereact/inputtextarea';
-// import { RadioButton } from 'primereact/radiobutton';
-// import { InputNumber } from 'primereact/inputnumber';
-// import { Dialog } from 'primereact/dialog';
-import { faEdit, faSearch, faTrash } from '@fortawesome/free-solid-svg-icons'
+import {
+  faChevronDown,
+  faEdit,
+  faEye,
+  faTimes,
+  faTrash
+} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { useEffect, useState } from 'react'
+import api from '../../../../utils/api'
 import './ViewUsers.css'
 
 export const ViewUsers = ({ user }: any) => {
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<any>(null)
   const [data, setData] = useState<any>(null)
+  const [showModal, setShowModal] = useState<boolean>(false)
+  const [page, setPage] = useState<number>(1)
+  const [limit, setLimit] = useState<number>(10)
+  const [totalDocuments, setTotalDocuments] = useState<number>(0)
+  const [totalPages, setTotalPages] = useState<number>(0)
+  const [previousPage, setPreviousPage] = useState<number>(0)
+  const [nextPage, setNextPage] = useState<number>(0)
 
-  const [filters, setFilters] = useState({
-    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    name: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    email: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-    role: { value: null, matchMode: FilterMatchMode.EQUALS },
-    status: { value: null, matchMode: FilterMatchMode.EQUALS }
-  })
-
-  const [globalFilterValue, setGlobalFilterValue] = useState('')
-  const roles = ['admin', 'user']
-  const statuses = ['active', 'inactive']
-
-  const getUsers = (data: any) => {
-    return [...(data || [])].map((d) => {
-      return d
-    })
-  }
-
-  const onGlobalFilterChange = (e: any) => {
-    const value = e.target.value
-    const _filters = { ...filters }
-    _filters['global'].value = value
-
-    setFilters(_filters)
-    setGlobalFilterValue(value)
-  }
-
-  const renderHeader = () => {
-    return (
-      <div className="justify-content-end flex">
-        <span className="p-input-icon-left">
-          <FontAwesomeIcon icon={faSearch} />
-          <InputText
-            value={globalFilterValue}
-            onChange={onGlobalFilterChange}
-            placeholder="Buscar por palavra-chave"
-          />
-        </span>
-      </div>
-    )
-  }
-
-  const emailBodyTemplate = (rowData: any) => {
-    return (
-      <React.Fragment>
-        <span className="image-text">{rowData.email}</span>
-      </React.Fragment>
-    )
-  }
-
-  const statusBodyTemplate = (rowData: any) => {
-    return (
-      <span className={`customer-badge status-${rowData.status}`}>
-        {rowData.status}
-      </span>
-    )
-  }
-
-  const statusItemTemplate = (option: any) => {
-    return <span className={`customer-badge status-${option}`}>{option}</span>
-  }
-
-  const roleBodyTemplate = (rowData: any) => {
-    return (
-      <span className={`customer-badge status-${rowData.role}`}>
-        {rowData.role}
-      </span>
-    )
-  }
-
-  const actionBodyTemplate = (rowData: any) => {
-    return (
-      <React.Fragment>
-        <FontAwesomeIcon icon={faEdit} className="p-button-success mr-2" />
-        <FontAwesomeIcon icon={faTrash} className="p-button-danger" />
-      </React.Fragment>
-    )
+  const showUser = (user: any) => {
+    // send the user data to the edit endpoint
+    // set the user data to the form
+    // open the dialog
+    console.log(user)
+    // setSelectedUser(user)
+    setShowModal(true)
   }
 
   const editUser = (user: any) => {
@@ -113,57 +44,147 @@ export const ViewUsers = ({ user }: any) => {
     // open the dialog
   }
 
-  // const roleItemTemplate = (option: any) => {
-  //   return <span className={`customer-badge status-${option}`}>{option}</span>
-  // }
+  // Search component
+  const [query, setQuery] = useState('')
+  const keys = ['name', 'email', 'role', 'status']
+  const [filteredResults, setFilteredResults] = useState([])
+  const pageLimit = ['5', '10', '15', '25', '50', '75', '100']
 
-  // const statusRowFilterTemplate = (options: any) => {
-  //   return (
-  //     <Dropdown
-  //       value={options}
-  //       options={statuses}
-  //       onChange={(e) => options.filterApplyCallback(e.value)}
-  //       itemTemplate={statusItemTemplate}
-  //       placeholder="Select a Status"
-  //       className="p-column-filter"
-  //       showClear
-  //     />
-  //   )
-  // }
+  const searchItems = (searchValue: any) => {
+    setQuery(searchValue)
+    if (query !== '') {
+      const filteredData = data.filter((item: any) => {
+        return keys.some((key) =>
+          item[key]
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .includes(query.toLowerCase())
+        )
+      })
+      setFilteredResults(filteredData)
+    } else {
+      setFilteredResults(data)
+    }
+  }
 
-  // const roleRowFilterTemplate = (options: any) => {
-  //   return (
-  //     <Dropdown
-  //       value={options}
-  //       options={roles}
-  //       onChange={(e) => options.filterApplyCallback(e.value)}
-  //       itemTemplate={roleItemTemplate}
-  //       placeholder="Select a Role"
-  //       className="p-column-filter"
-  //       showClear
-  //     />
-  //   )
-  // }
+  const searchItemsByName = (searchValue: any) => {
+    setQuery(searchValue)
+    if (query !== '') {
+      const filteredData = data.filter((item: any) => {
+        return keys.some(() =>
+          item['name']
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .includes(query.toLowerCase())
+        )
+      })
+      setFilteredResults(filteredData)
+    } else {
+      setFilteredResults(data)
+    }
+  }
 
-  const header = renderHeader()
+  const searchItemsByEmail = (searchValue: any) => {
+    setQuery(searchValue)
+    if (query !== '') {
+      const filteredData = data.filter((item: any) => {
+        return keys.some(() =>
+          item['email']
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .includes(query.toLowerCase())
+        )
+      })
+      setFilteredResults(filteredData)
+    } else {
+      setFilteredResults(data)
+    }
+  }
+
+  const searchItemsByRole = (searchValue: any) => {
+    setQuery(searchValue)
+    if (query !== '') {
+      const filteredData = data.filter((item: any) => {
+        return keys.some(() =>
+          item['role']
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .includes(query.toLowerCase())
+        )
+      })
+      setFilteredResults(filteredData)
+    } else {
+      setFilteredResults(data)
+    }
+  }
+
+  const searchItemsByStatus = (searchValue: any) => {
+    setQuery(searchValue)
+    if (query !== '') {
+      const filteredData = data.filter((item: any) => {
+        return keys.some(() =>
+          item['status']
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .includes(query.toLowerCase())
+        )
+      })
+      setFilteredResults(filteredData)
+    } else {
+      setFilteredResults(data)
+    }
+  }
+
+  const changePageLimit = (pageParam: number) => {
+    setLimit(pageParam)
+  }
+
+  const onNext = () => {
+    if (page < totalPages) {
+      setPreviousPage(page)
+      setPage(page + 1)
+    }
+  }
+
+  const onPrevious = () => {
+    if (page > 1) {
+      setNextPage(page)
+      setPage(page - 1)
+    }
+  }
+
+  // End of search component
 
   useEffect(() => {
     api
-      .get('/users', {
+      .get(`/users?page=${page}&limit=${limit}`, {
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
         }
       })
       .then((res) => res.data)
-      .then((data) => {
-        setData(getUsers(data.data))
-        setLoading(false)
-      })
-      .catch((err) => {
-        setLoading(false)
-        setError(err.response.data.message)
-      })
-  }, [])
+      .then(
+        (data) => {
+          setData(data.data)
+          setTotalPages(data.totalPages)
+          setTotalDocuments(data.totalDocuments)
+          setLoading(false)
+        },
+        (err) => {
+          setError(err.response.data.message)
+          setLoading(false)
+        }
+      )
+  }, [limit, page])
+
+  const closeModal = () => {
+    setShowModal(false)
+  }
 
   if (loading) return <p>Loading...</p>
   if (error) return <p>Error: {error.message}</p>
@@ -174,67 +195,277 @@ export const ViewUsers = ({ user }: any) => {
         <div className="main__title">
           <img width="60" src="https://i.imgur.com/6VBx3io.png" alt="avatar" />
           <div className="main__greetings">
-            <h1>Olá, {user.name.split(' ')[0]}!</h1>
+            <h1>Olá, {user ? user.name.split(' ')[0].trim() : 'Visitante'}!</h1>
             <p>Bem vindo ao painel de gerenciamento de usuários!</p>
           </div>
         </div>
 
-        <div className="datatable-filter">
-          <div className="card">
-            <DataTable
-              value={data}
-              paginator
-              className="p-datatable-users"
-              rows={10}
-              dataKey="id"
-              filters={filters}
-              filterDisplay="row"
-              loading={loading}
-              responsiveLayout="scroll"
-              globalFilterFields={['name', 'email', 'role', 'status']}
-              header={header}
-              emptyMessage="No customers found."
-            >
-              <Column
-                field="name"
-                header="Usuário"
-                filter
-                filterPlaceholder="Buscar por nome..."
-                style={{ minWidth: '16rem' }}
+        {/* Novo datatable */}
+
+        <div className="wrapper">
+          <div className="card-grid">
+            <div className="card">
+              <div className="card-header">
+                <h3>Usuários</h3>
+                <button className="btn btn-primary">Novo usuário</button>
+
+                {/* Search Button */}
+
+                <div className="search-wrapper">
+                  <label htmlFor="search-form">
+                    <input
+                      type="search"
+                      name="search-form"
+                      id="search-form"
+                      className="search-input"
+                      placeholder="Buscar por nome, email, função ou status"
+                      onChange={(e) => searchItems(e.target.value)}
+                    />
+                    <span className="sr-only">Search data here</span>
+                  </label>
+                </div>
+
+                {/* End of search button */}
+
+                <div className="card-body">
+                  <div className="table-responsive">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>
+                            Usuário
+                            <div className="search-wrapper">
+                              <label htmlFor="search-form">
+                                <input
+                                  type="search"
+                                  name="search-form"
+                                  id="search-form"
+                                  className="search-input"
+                                  placeholder="Buscar por usuário"
+                                  onChange={(e) =>
+                                    searchItemsByName(e.target.value)
+                                  }
+                                />
+                                <span className="sr-only">
+                                  Search names here
+                                </span>
+                              </label>
+                            </div>
+                          </th>
+                          <th>
+                            E-mail
+                            <div className="search-wrapper">
+                              <label htmlFor="search-form">
+                                <input
+                                  type="search"
+                                  name="search-form"
+                                  id="search-form"
+                                  className="search-input"
+                                  placeholder="Buscar por e-mail"
+                                  onChange={(e) =>
+                                    searchItemsByEmail(e.target.value)
+                                  }
+                                />
+                                <span className="sr-only">
+                                  Search email here
+                                </span>
+                              </label>
+                            </div>
+                          </th>
+                          <th>
+                            Status
+                            <div className="search-wrapper">
+                              <label htmlFor="search-form">
+                                <input
+                                  type="search"
+                                  name="search-form"
+                                  id="search-form"
+                                  className="search-input"
+                                  placeholder="Buscar por status (active | inactive)"
+                                  onChange={(e) =>
+                                    searchItemsByStatus(e.target.value)
+                                  }
+                                />
+                                <span className="sr-only">
+                                  Search status here
+                                </span>
+                              </label>
+                            </div>
+                          </th>
+                          <th>
+                            Função
+                            <div className="search-wrapper">
+                              <label htmlFor="search-form">
+                                <input
+                                  type="search"
+                                  name="search-form"
+                                  id="search-form"
+                                  className="search-input"
+                                  placeholder="Buscar por função (user | admin)"
+                                  onChange={(e) =>
+                                    searchItemsByRole(e.target.value)
+                                  }
+                                />
+                                <span className="sr-only">
+                                  Search roles here
+                                </span>
+                              </label>
+                            </div>
+                          </th>
+                          <th>Ações</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {query.length > 1
+                          ? filteredResults.map((item: any) => {
+                              return (
+                                <tr key={item.id}>
+                                  <td>{item.name}</td>
+                                  <td>{item.email}</td>
+                                  <td>
+                                    <span
+                                      className={`user-badge status-${item.status}`}
+                                    >
+                                      {item.status}
+                                    </span>
+                                  </td>
+                                  <td>
+                                    <span
+                                      className={`user-badge role-${item.role}`}
+                                    >
+                                      {item.role}
+                                    </span>
+                                  </td>
+                                  <td>
+                                    <FontAwesomeIcon
+                                      icon={faEye}
+                                      className="p-button-info mr-2"
+                                      onClick={() => showUser(item)}
+                                    />
+                                    <FontAwesomeIcon
+                                      icon={faEdit}
+                                      className="p-button-success mr-2"
+                                    />
+                                    <FontAwesomeIcon
+                                      icon={faTrash}
+                                      className="p-button-danger"
+                                    />
+                                  </td>
+                                </tr>
+                              )
+                            })
+                          : data.map((user: any) => (
+                              <tr key={user.id}>
+                                <td>{user.name}</td>
+                                <td>{user.email}</td>
+                                <td>
+                                  <span
+                                    className={`user-badge status-${user.status}`}
+                                  >
+                                    {user.status}
+                                  </span>
+                                </td>
+                                <td>
+                                  <span
+                                    className={`user-badge role-${user.role}`}
+                                  >
+                                    {user.role}
+                                  </span>
+                                </td>
+                                <td>
+                                  <FontAwesomeIcon
+                                    icon={faEye}
+                                    className="p-button-info mr-2"
+                                    onClick={() => showUser(user)}
+                                  />
+                                  <FontAwesomeIcon
+                                    icon={faEdit}
+                                    className="p-button-success mr-2"
+                                  />
+                                  <FontAwesomeIcon
+                                    icon={faTrash}
+                                    className="p-button-danger"
+                                  />
+                                </td>
+                              </tr>
+                            ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div className="pagination">
+                    <button className="btn btn-primary" onClick={onPrevious}>
+                      Anterior
+                    </button>
+                    <button className="btn btn-primary" onClick={onNext}>
+                      Próximo
+                    </button>
+
+                    <div className="page-info">
+                      <span>
+                        {page}-{totalPages} de {totalDocuments}
+                      </span>
+
+                      <div className="select">
+                        <select
+                          name="users"
+                          id="users"
+                          onChange={(e) =>
+                            changePageLimit(parseInt(e.target.value))
+                          }
+                        >
+                          {pageLimit.map((limit) => {
+                            return (
+                              <option value={limit} key={limit}>
+                                {limit}
+                              </option>
+                            )
+                          })}
+                        </select>
+
+                        <FontAwesomeIcon icon={faChevronDown} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className={`modal ${showModal ? 'isVisible' : 'isClosed'}`}>
+          <div className="modal__content">
+            <div className="modal__header">
+              <h2>Visualizar Usuário</h2>
+              <FontAwesomeIcon
+                icon={faTimes}
+                className="modal__close"
+                onClick={closeModal}
               />
-              <Column
-                header="E-mail"
-                filterField="email"
-                style={{ minWidth: '16rem' }}
-                body={emailBodyTemplate}
-                filter
-                filterPlaceholder="Buscar por e-mail..."
-              />
-              <Column
-                field="role"
-                header="Role"
-                className="p-column-filter"
-                showFilterMenu={true}
-                filterMenuStyle={{ width: '14rem' }}
-                style={{ minWidth: '12rem' }}
-                body={roleBodyTemplate}
-              />
-              <Column
-                field="status"
-                header="Status"
-                className="p-column-filter"
-                showFilterMenu={false}
-                filterMenuStyle={{ width: '14rem' }}
-                style={{ minWidth: '12rem' }}
-                body={statusBodyTemplate}
-              />
-              <Column
-                header="Ações"
-                body={actionBodyTemplate}
-                exportable={false}
-                style={{ minWidth: '4rem' }}
-              />
-            </DataTable>
+
+              <div className="modal__body">
+                <div className="modal__body__left">
+                  <img src={user.avatar} alt="avatar" />
+
+                  <div className="modal__body__left__info">
+                    <h3>{user.name}</h3>
+                    <p>{user.email}</p>
+
+                    <div className="modal__body__left__info__status">
+                      <span
+                        className={`user-badge status-${user.status}`}
+                        style={{ marginRight: '1rem' }}
+                      >
+                        {user.status}
+                      </span>
+                      <span className={`user-badge role-${user.role}`}>
+                        {user.role}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </main>

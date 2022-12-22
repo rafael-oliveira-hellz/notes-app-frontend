@@ -19,6 +19,7 @@ export const Main = ({ user }: any) => {
   const [totalPendingNotes, setTotalPendingNotes] = useState<number>(0)
   const [totalOverdueNotes, setTotalOverdueNotes] = useState<number>(0)
   const [totalUndatedNotes, setTotalUndatedNotes] = useState<number>(0)
+  const [token] = useState(sessionStorage.getItem('access_token') || '')
 
   let userName = ''
 
@@ -47,7 +48,7 @@ export const Main = ({ user }: any) => {
       api
         .get(element, {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
+            Authorization: `Bearer ${token}`
           }
         })
         .then(({ data }) => {
@@ -93,7 +94,7 @@ export const Main = ({ user }: any) => {
           }
         })
     }
-  }, [])
+  }, [token])
 
   return (
     <main className="main__container">

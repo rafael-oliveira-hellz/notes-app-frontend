@@ -35,11 +35,14 @@ export const AuthProvider = ({ children }: any) => {
         .post('/auth/signin', userData)
         .then((response: AxiosResponse) => response.data)
 
+      setUser(undefined)
+      sessionStorage.clear()
+      localStorage.clear()
+
       sessionStorage.setItem('access_token', data.access_token)
 
-      console.log(data)
-
       setUser(data.user)
+      sessionStorage.setItem('user', JSON.stringify(data.user))
 
       setAuthenticated(true)
 
