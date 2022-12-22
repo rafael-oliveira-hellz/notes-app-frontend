@@ -16,6 +16,7 @@ export const ViewUsers = ({ user }: any) => {
   const [error, setError] = useState<any>(null)
   const [data, setData] = useState<any>(null)
   const [showModal, setShowModal] = useState<boolean>(false)
+  const [selectedUser, setSelectedUser] = useState<any>(null)
   const [page, setPage] = useState<number>(1)
   const [limit, setLimit] = useState<number>(10)
   const [totalDocuments, setTotalDocuments] = useState<number>(0)
@@ -28,6 +29,7 @@ export const ViewUsers = ({ user }: any) => {
     // set the user data to the form
     // open the dialog
     console.log(user)
+    setSelectedUser(user)
     // setSelectedUser(user)
     setShowModal(true)
   }
@@ -161,6 +163,9 @@ export const ViewUsers = ({ user }: any) => {
   // End of search component
 
   useEffect(() => {
+    console.log('page: ', page)
+    console.log('limit: ', limit)
+
     api
       .get(`/users?page=${page}&limit=${limit}`, {
         headers: {
@@ -170,10 +175,11 @@ export const ViewUsers = ({ user }: any) => {
       .then((res) => res.data)
       .then(
         (data) => {
+          console.log(data)
           setData(data.data)
+          setLoading(false)
           setTotalPages(data.totalPages)
           setTotalDocuments(data.totalDocuments)
-          setLoading(false)
         },
         (err) => {
           setError(err.response.data.message)
@@ -195,7 +201,9 @@ export const ViewUsers = ({ user }: any) => {
         <div className="main__title">
           <img width="60" src="https://i.imgur.com/6VBx3io.png" alt="avatar" />
           <div className="main__greetings">
-            <h1>Olá, {user ? user.name.split(' ')[0].trim() : 'Visitante'}!</h1>
+            <h1>
+              Olá, {user ? user?.name.split(' ')[0].trim() : 'Visitante'}!
+            </h1>
             <p>Bem vindo ao painel de gerenciamento de usuários!</p>
           </div>
         </div>
@@ -445,21 +453,21 @@ export const ViewUsers = ({ user }: any) => {
 
               <div className="modal__body">
                 <div className="modal__body__left">
-                  <img src={user.avatar} alt="avatar" />
+                  <img src={selectedUser?.avatar} alt="avatar" />
 
                   <div className="modal__body__left__info">
-                    <h3>{user.name}</h3>
-                    <p>{user.email}</p>
+                    <h3>{selectedUser?.name}</h3>
+                    <p>{selectedUser?.email}</p>
 
                     <div className="modal__body__left__info__status">
                       <span
-                        className={`user-badge status-${user.status}`}
+                        className={`user-badge status-${selectedUser?.status}`}
                         style={{ marginRight: '1rem' }}
                       >
-                        {user.status}
+                        {selectedUser?.status}
                       </span>
-                      <span className={`user-badge role-${user.role}`}>
-                        {user.role}
+                      <span className={`user-badge role-${selectedUser?.role}`}>
+                        {selectedUser?.role}
                       </span>
                     </div>
                   </div>
