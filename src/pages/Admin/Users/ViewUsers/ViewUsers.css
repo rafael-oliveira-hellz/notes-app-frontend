@@ -26,3 +26,119 @@ main {
   color: #2e4a66;
   margin-bottom: 0.3125rem;
 }
+
+.datatable-filter .p-datatable.p-datatable-users .p-datatable-header {
+  padding: 1rem;
+  text-align: left;
+  font-size: 1.5rem;
+}
+.datatable-filter .p-datatable.p-datatable-users .p-paginator {
+  padding: 1rem;
+}
+.datatable-filter .p-datatable.p-datatable-users .p-datatable-thead > tr > th {
+  text-align: left;
+}
+.datatable-filter .p-datatable.p-datatable-users .p-datatable-tbody > tr > td {
+  cursor: auto;
+}
+.datatable-filter
+  .p-datatable.p-datatable-users
+  .p-dropdown-label:not(.p-placeholder) {
+  text-transform: uppercase;
+}
+
+.justify-content-end {
+  justify-content: flex-end;
+}
+
+.flex {
+  display: flex;
+}
+
+.p-datatable
+  > .p-datatable-wrapper
+  > table.p-datatable-table
+  > tbody.p-datatable-tbody
+  > tr:hover {
+  background-color: #f3f4f6;
+  transition: all 0.3s ease-in-out;
+  animation-fill-mode: forwards;
+}
+
+.p-datatable
+  > .p-datatable-wrapper
+  > table.p-datatable-table
+  > tbody.p-datatable-tbody
+  > tr
+  > td {
+  padding: 1rem;
+}
+
+.p-datatable
+  > .p-datatable-wrapper
+  > table.p-datatable-table
+  > thead.p-datatable-thead
+  > tr:nth-child(1)
+  > th {
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.p-datatable
+  > .p-datatable-wrapper
+  > table.p-datatable-table
+  > thead.p-datatable-thead
+  > tr:nth-child(2)
+  > th {
+  text-align: center;
+}
+
+.p-datatable
+  > .p-datatable-wrapper
+  > table.p-datatable-table
+  > thead.p-datatable-thead
+  > tr:nth-child(2)
+  > th
+  > div
+  > div
+  > input.p-inputtext {
+  padding: 0.5rem 1rem;
+  width: 100%;
+}
+
+.p-button-success {
+  background-color: #2e4a66;
+  border-color: #2e4a66;
+  color: #fff;
+  font-weight: 600;
+  font-size: 1.25rem;
+  padding: 0.5rem 1.25rem;
+  border-radius: 0.3125rem;
+  transition: all 0.3s ease-in-out;
+  animation-fill-mode: forwards;
+}
+
+.p-button-danger {
+  background-color: #f3f4f6;
+  border-color: #f3f4f6;
+  color: #2e4a66;
+  font-weight: 600;
+  font-size: 1.25rem;
+  padding: 0.5rem 1.25rem;
+  border-radius: 0.3125rem;
+  transition: all 0.3s ease-in-out;
+  animation-fill-mode: forwards;
+}
+
+.p-input-icon-left {
+  width: 100%;
+}
+
+.p-input-icon-left > svg {
+  color: #2e4a66;
+  margin-right: 0.625rem;
+}
+
+.p-column-filter {
+  text-align: center;
+}

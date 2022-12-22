@@ -1,5 +1,6 @@
 import { faBars, faClock } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import './Navbar.css'
 
@@ -31,6 +32,20 @@ export const Navbar = ({ handleSidebarOpen }: Props) => {
   //   setSelectedTab(tab)
   // }
 
+  useEffect(() => {
+    const timeDisplay = document.getElementById('time') as HTMLElement
+
+    function refreshTime() {
+      const dateString = new Date().toLocaleString('pt-BR', {
+        timeZone: 'America/Sao_Paulo'
+      })
+      const formattedString = dateString.replace(', ', ' - ')
+      timeDisplay.innerHTML = formattedString
+    }
+
+    setInterval(refreshTime, 1000)
+  }, [])
+
   return (
     <>
       <nav className="navbar">
@@ -55,6 +70,10 @@ export const Navbar = ({ handleSidebarOpen }: Props) => {
           <a href="#">
             <FontAwesomeIcon icon={faClock} aria-hidden="true" />
           </a>
+
+          <div className="newTime">
+            <p id="time"></p>
+          </div>
 
           <a href="#">
             <img
