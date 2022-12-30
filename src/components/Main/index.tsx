@@ -19,8 +19,11 @@ export const Main = ({ user }: any) => {
   const [totalPendingNotes, setTotalPendingNotes] = useState<number>(0)
   const [totalOverdueNotes, setTotalOverdueNotes] = useState<number>(0)
   const [totalUndatedNotes, setTotalUndatedNotes] = useState<number>(0)
+  const [error, setError] = useState<object>({})
 
   let userName = ''
+
+  console.log('user (Main): ', user)
 
   if (user) {
     if (typeof user !== 'undefined') {
@@ -50,48 +53,54 @@ export const Main = ({ user }: any) => {
             Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
           }
         })
-        .then(({ data }) => {
-          switch (element) {
-            case '/users':
-              setTotalUsers(data.data.length > 0 ? data.totalDocuments : 0)
-              break
-            case '/users/active':
-              setTotalActiveUsers(
-                data.result.data.length > 0 ? data.result.totalDocuments : 0
-              )
-              break
-            case '/users/inactive':
-              setTotalInactiveUsers(
-                data.users.length > 0 ? data.totalDocuments : 0
-              )
-              break
-            case '/notes':
-              setTotalNotes(data.data.length > 0 ? data.totalDocuments : 0)
-              break
-            case '/notes/completed':
-              setTotalCompletedNotes(
-                data.notes.length > 0 ? data.notes.length : 0
-              )
-              break
-            case '/notes/pending':
-              setTotalPendingNotes(
-                data.notes.length > 0 ? data.notes.length : 0
-              )
-              break
-            case '/notes/overdue':
-              setTotalOverdueNotes(
-                data.notes.length > 0 ? data.notes.length : 0
-              )
-              break
-            case '/notes/undated':
-              setTotalUndatedNotes(
-                data.notes.length > 0 ? data.notes.length : 0
-              )
-              break
-            default:
-              break
+        .then(
+          ({ data }) => {
+            switch (element) {
+              case '/users':
+                setTotalUsers(data.data.length > 0 ? data.totalDocuments : 0)
+                break
+              case '/users/active':
+                setTotalActiveUsers(
+                  data.result.data.length > 0 ? data.result.totalDocuments : 0
+                )
+                break
+              case '/users/inactive':
+                setTotalInactiveUsers(
+                  data.result.data.length > 0 ? data.result.totalDocuments : 0
+                )
+                break
+              case '/notes':
+                setTotalNotes(data.data.length > 0 ? data.totalDocuments : 0)
+                break
+              case '/notes/completed':
+                setTotalCompletedNotes(
+                  data.result.data.length > 0 ? data.result.data.length : 0
+                )
+                break
+              case '/notes/pending':
+                setTotalPendingNotes(
+                  data.result.data.length > 0 ? data.result.data.length : 0
+                )
+                break
+              case '/notes/overdue':
+                setTotalOverdueNotes(
+                  data.result.data.length > 0 ? data.result.data.length : 0
+                )
+                break
+              case '/notes/undated':
+                setTotalUndatedNotes(
+                  data.result.data.length > 0 ? data.result.data.length : 0
+                )
+                break
+              default:
+                break
+            }
+          },
+          (err) => {
+            console.log(err.response.data)
+            setError(err.response.data)
           }
-        })
+        )
     }
   }, [])
 

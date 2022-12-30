@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }: any) => {
   const { setFlashMessage } = UseFlashMessage()
   const [authenticated, setAuthenticated] = useState<boolean>(false)
 
-  const [user, setUser] = useState<any>({})
+  const [user, setUser] = useState<object>({})
   const [loading, setLoading] = useState<boolean>(true)
 
   useEffect(() => {
@@ -74,8 +74,24 @@ export const AuthProvider = ({ children }: any) => {
     setFlashMessage(messageText, messageType)
   }
 
+  const registerAdmin = async (userData: User) => {
+    let messageText = 'Cadastro realizado com sucesso!'
+    let messageType = 'success'
+
+    try {
+      await api
+        .post('/auth/signup', userData)
+        .then((response: AxiosResponse) => response.data)
+    } catch (error: any) {
+      messageText = error
+      messageType = 'error'
+    }
+
+    setFlashMessage(messageText, messageType)
+  }
+
   const logout = (): void => {
-    setUser(undefined)
+    setUser({})
     sessionStorage.clear()
     localStorage.clear()
     navigate('/login')
@@ -83,7 +99,15 @@ export const AuthProvider = ({ children }: any) => {
 
   return (
     <AuthContext.Provider
-      value={{ authenticated, user, loading, login, register, logout }}
+      value={{
+        authenticated,
+        user,
+        loading,
+        login,
+        register,
+        registerAdmin,
+        logout
+      }}
     >
       {children}
     </AuthContext.Provider>

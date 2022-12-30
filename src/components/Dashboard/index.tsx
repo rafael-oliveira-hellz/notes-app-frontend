@@ -1,9 +1,10 @@
-import { Main } from 'components/Main'
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useLayoutEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { Main } from '../../components/Main'
 import { Navbar } from '../../components/Navbar'
 import { SideBar } from '../../components/SideBar'
 import { AuthContext } from '../../context/auth'
+import { ViewNotes } from '../../pages/Admin/Notes/ViewNotes'
 import { ViewUsers } from '../../pages/Admin/Users/ViewUsers'
 import api from '../../utils/api'
 
@@ -17,24 +18,21 @@ export const Dashboard = () => {
 
   const handleSidebarOpen = () => {
     setSidebarOpen(!sidebarOpen)
-    console.log(sidebarOpen)
   }
 
-  useEffect(() => {
-    console.log(authenticated)
+  useLayoutEffect(() => {
     if (!authenticated) {
       navigate('/login')
     }
 
     if (access_token) {
       api
-        .get('/auth/verify-user', {
+        .get('/users/me', {
           headers: {
             Authorization: `Bearer ${access_token}`
           }
         })
         .then((response) => {
-          console.log(response.data)
           setUser(response.data.user)
         })
     }
@@ -50,6 +48,8 @@ export const Dashboard = () => {
         {location.pathname === '/dashboard' && <Main user={user} />}
 
         {location.pathname === '/dashboard/users' && <ViewUsers user={user} />}
+
+        {location.pathname === '/dashboard/notes' && <ViewNotes user={user} />}
 
         <Navbar
           handleSidebarOpen={handleSidebarOpen}

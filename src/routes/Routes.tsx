@@ -1,9 +1,10 @@
+import { ViewNotes } from 'pages/Admin/Notes/ViewNotes'
 import { useContext, useEffect, useState } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { Dashboard } from '../components/Dashboard'
 import { AuthContext } from '../context/auth'
-import { ViewUsers } from '../pages/Admin/Users/ViewUsers'
 import { ViewUser } from '../pages/Admin/Users/view-user'
+import { ViewUsers } from '../pages/Admin/Users/ViewUsers'
 import LoginPage from '../pages/Login'
 import SignupPage from '../pages/Signup'
 import api from '../utils/api'
@@ -61,6 +62,14 @@ function AllRoutes() {
         }
       />
       <Route
+        path="/management/notes"
+        element={
+          <Private>
+            <ViewNotes />
+          </Private>
+        }
+      />
+      <Route
         path="/dashboard/*"
         element={
           <Private>
@@ -86,6 +95,15 @@ function AllRoutes() {
             }
           />
         </Route>
+        ;
+        <Route
+          path="notes"
+          element={
+            <Private>
+              <ViewNotes />
+            </Private>
+          }
+        />
       </Route>
       {/* <<Route path="/create-profile" component={CreateProfile} />
       <Route path="/edit-profile" component={EditProfile} />
