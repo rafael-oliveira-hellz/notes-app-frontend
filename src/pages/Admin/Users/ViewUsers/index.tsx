@@ -10,8 +10,8 @@ import { useContext, useEffect, useState } from 'react'
 import api from '../../../../utils/api'
 import './index.css'
 // import { Row, Col, Container, Card, Table, Alert } from 'react-bootstrap'
+import axios from 'axios'
 import { Alert } from 'react-bootstrap'
-import { useNavigate } from 'react-router-dom'
 import '../../../../../node_modules/bootstrap/dist/css/bootstrap.min.css'
 import DeleteConfirmation from '../../../../components/DeleteConfirmation'
 import { AuthContext } from '../../../../context/auth'
@@ -38,8 +38,22 @@ export const ViewUsers = ({ user }: any) => {
   const [deleteMessage, setDeleteMessage] = useState('')
   const [userMessage, setUserMessage] = useState('')
   const [showAddModal, setShowAddModal] = useState<boolean>(false)
+  const [profilePicture, setProfilePicture] = useState<string>('')
   const { registerAdmin }: any = useContext(AuthContext as any)
-  const navigate = useNavigate()
+
+  const uploadImage = (img: any) => {
+    const body = new FormData()
+    body.set('key', `${import.meta.env.VITE_IMGBB_API_KEY}`)
+    body.append('image', img)
+
+    console.log(`${import.meta.env.VITE_IMGBB_API_KEY}`)
+
+    return axios({
+      method: 'post',
+      url: 'https://api.imgbb.com/1/upload',
+      data: body
+    })
+  }
 
   const showUser = (user: any) => {
     // send the user data to the edit endpoint
@@ -127,27 +141,43 @@ export const ViewUsers = ({ user }: any) => {
   const handleSubmit = async (e: any) => {
     e.preventDefault()
 
-    const formData = new FormData()
+    uploadImage(selectedUser.profile_picture).then((resp) => {
+      console.log(resp.data.data.display_url)
+      setProfilePicture(resp.data.data.display_url)
+    })
 
-    const userFormData: any = await Object.keys(selectedUser).forEach((key) =>
-      formData.append(key, selectedUser[key])
-    )
+    console.log('profile 0: ', profilePicture)
 
-    formData.append('selectedUser', userFormData)
+    // const formData = new FormData()
+
+    // const userFormData: any = await Object.keys(selectedUser).forEach((key) =>
+    //   formData.append(key, selectedUser[key])
+    // )
+
+    // formData.append('selectedUser', userFormData)
+
+    setUser({
+      name: selectedUser.name,
+      email: selectedUser.email,
+      profile_picture: profilePicture
+    })
+
+    console.log(newUser)
 
     await api
-      .put(`users/${selectedUser.id}/edit`, formData, {
+      .put(`users/${selectedUser.id}/edit`, newUser, {
         headers: {
-          Authorization: `Bearer ${sessionStorage.getItem('access_token')}`,
-          'Content-Type': 'multipart/form-data'
+          Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
         }
       })
-      .then((response) => {
-        console.log(response)
-      })
-      .catch((err) => {
-        return err.response.data
-      })
+      .then(
+        (response) => {
+          console.log(response)
+        },
+        (error) => {
+          console.log(error)
+        }
+      )
   }
 
   // Search component
@@ -308,10 +338,10 @@ export const ViewUsers = ({ user }: any) => {
   }
 
   const pageReload = () => {
-    setTimeout(() => {
-      setShowEditModal(false)
-      window.location.reload()
-    }, 1500)
+    // setTimeout(() => {
+    //   setShowEditModal(false)
+    //   window.location.reload()
+    // }, 1500)
   }
 
   if (loading) return <p>Loading...</p>
@@ -612,11 +642,11 @@ export const ViewUsers = ({ user }: any) => {
 
             <div className="modal__body">
               <div className="modal__body__left">
-                {/* <img src={selectedUser?.profile_picture} alt="avatar" /> */}
-                <img
+                <img src={selectedUser?.profile_picture} alt="avatar" />
+                {/* <img
                   src="https://xsgames.co/randomusers/assets/images/favicon.png"
                   alt="avatar"
-                />
+                /> */}
 
                 <div className="modal__body__left__info">
                   <h3>Nome: {selectedUser?.name}</h3>
